@@ -1,43 +1,48 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-4xl mx-auto mt-6">
-    <h1 class="text-2xl font-bold mb-4">Welcome, {{ $user->name }} ({{ $user->role }})</h1>
+<div class="max-w-3xl mx-auto">
 
-    <a href="{{ route('notes.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">+ New Note</a>
+    <!-- Create Note Button -->
+    <div class="mb-6 text-right">
+        <a href="{{ route('notes.create') }}"
+           class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 transition">
+            + New Note
+        </a>
+    </div>
 
+    <!-- Flash -->
     @if(session('success'))
-        <p class="mt-4 text-green-600">{{ session('success') }}</p>
+        <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
+            {{ session('success') }}
+        </div>
     @endif
 
-    <!-- Search form -->
-    <form method="GET" action="{{ route('dashboard') }}" class="mt-6 mb-4">
-        <input type="text" name="search" placeholder="Search notes..." value="{{ request('search') }}"
-               class="border p-2 rounded w-full md:w-1/2">
-    </form>
-
-    <div class="mt-6 space-y-4">
+    <!-- Note List -->
+    <div class="space-y-4">
         @forelse($notes as $note)
-            <div class="p-4 border rounded shadow">
-                <h2 class="text-xl font-semibold">{{ $note->title }}</h2>
-                <p class="mt-1">{{ $note->content }}</p>
-                <p class="text-sm text-gray-500">By: {{ $note->user->name ?? 'Unknown' }}</p>
-                <div class="mt-2">
-                    <a href="{{ route('notes.edit', $note->id) }}" class="text-blue-600">Edit</a>
-                    |
-                    <form action="{{ route('notes.destroy', $note->id) }}" method="POST" class="inline">
+            <div class="p-4 bg-white rounded shadow flex justify-between items-start">
+                <div>
+                    <h2 class="text-lg font-semibold text-blue-700">{{ $note->title }}</h2>
+                    <p class="text-gray-600 text-sm mt-1">{{ $note->content }}</p>
+                </div>
+                <div class="flex gap-2">
+                    <a href="{{ route('notes.edit', $note->id) }}"
+                       class="text-sm text-blue-500 hover:underline">Edit</a>
+                    <form action="{{ route('notes.destroy', $note->id) }}" method="POST"
+                          onsubmit="return confirm('Delete this note?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" onclick="return confirm('Delete note?')" class="text-red-600">Delete</button>
+                        <button class="text-sm text-red-500 hover:underline">Delete</button>
                     </form>
                 </div>
             </div>
         @empty
-            <p>No notes found.</p>
+            <p class="text-gray-500 text-center">No notes yet.</p>
         @endforelse
     </div>
 
-    <!-- Pagination links -->
+    <!-- Pagination -->
     <div class="mt-6">
         {{ $notes->links() }}
     </div>

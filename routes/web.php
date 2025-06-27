@@ -4,12 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NoteController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [NoteController::class, 'dashboard'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [NoteController::class, 'dashboard'])->name('dashboard');
     Route::resource('notes', NoteController::class);
 
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
